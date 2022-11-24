@@ -36,4 +36,15 @@ load data to the client side
 4.cursor.toArray()
 5.return the result
 
+
+
+import { useParams } from 'react-router-dom';
+const { id } = useParams()
+[id]
+${id}
+
+
+
+
+
 */
