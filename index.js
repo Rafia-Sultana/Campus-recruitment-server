@@ -21,24 +21,31 @@ async function run() {
     try {
         await client.connect();
         const userCollection = client.db('campus-recruitment').collection('users')
-        const studentCollection = client.db('campus-recruitment').collection('studentInfo')
+        const personalCollection = client.db('campus-recruitment').collection('personal Details')
+        const addressCollection = client.db('campus-recruitment').collection('Address Details')
+        const careerCollection = client.db('campus-recruitment').collection('Career Details')
+        const employmentCollection = client.db('campus-recruitment').collection('Employment History Details')
+        const academicCollection = client.db('campus-recruitment').collection('Academic Details')
+        const trainingCollection = client.db('campus-recruitment').collection('training Summary')
 
 
 
+        //GET user
         app.get('/user', async (req, res) => {
             const query = {};
             const cursor = userCollection.find(query)
             const users = await cursor.toArray()
             res.send(users)
         })
-        app.get('/apply/:id', async (req, res) => {
+
+        //GET User sepecifiqly
+        app.get('/user/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id: ObjectId(req.params.id) };
-            // console.log(req.params)
-            const cursor = userCollection.findOne(query)
+            const query = { _id: ObjectId(id) };
+            const resutl = await userCollection.findOne(query)
             // console.log(cursor)
             // const studentInfo = await cursor.toArray()
-            res.send(cursor)
+            res.send(resutl)
         })
 
 
@@ -50,13 +57,138 @@ async function run() {
             res.send(result)
         });
 
-        //POST : add appply job
-        app.post('/apply', async (req, res) => {
-            const stuinfo = req.body;
-            console.log('adding applied job', stuinfo)
-            const result = await studentCollection.insertOne(stuinfo)
+
+        //POST==> personal
+        app.post('/personal', async (req, res) => {
+            const personal = req.body;
+            console.log('adding personal', personal)
+            const result = await personalCollection.insertOne(personal)
             res.send(result)
         })
+
+        //GET==> personal
+        app.get('/personal', async (req, res) => {
+            const query = {}
+            const cursor = personalCollection.find(query)
+            const personal = await cursor.toArray()
+            res.send(personal)
+        })
+        //GET Personal sepecifiqly
+        /*    app.get('/personal/:id', async (req, res) => {
+               const id = req.params.id;
+               const query = { _id: ObjectId(id) };
+               const result = await personalCollection.findOne(query)
+               // console.log(cursor)
+               // const studentInfo = await cursor.toArray()
+               res.send(result)
+           }) */
+
+
+
+
+        //POST==> address
+        app.post('/address', async (req, res) => {
+            const address = req.body;
+            console.log('adding address ', address)
+            const result = await addressCollection.insertOne(address)
+            res.send(result)
+        })
+
+        //GET==> address 
+        app.get('/address', async (req, res) => {
+            const query = {}
+            const cursor = addressCollection.find(query)
+            const address = await cursor.toArray()
+            res.send(address)
+        })
+
+
+        //POST==> career
+        app.post('/career', async (req, res) => {
+            const career = req.body;
+            console.log('adding career', career)
+            const result = await careerCollection.insertOne(career)
+            res.send(result)
+        })
+
+        //GET==> address 
+        app.get('/career', async (req, res) => {
+            const query = {}
+            const cursor = careerCollection.find(query)
+            const career = await cursor.toArray()
+            res.send(career)
+        })
+
+        //POST==> Employment History
+        app.post('/employmenthistory', async (req, res) => {
+            const employment = req.body;
+            console.log('adding employment', employment)
+            const result = await employmentCollection.insertOne(employment)
+            res.send(result)
+        })
+
+        //GET==> Employment History
+        app.get('/employmenthistory', async (req, res) => {
+            const query = {}
+            const cursor = employmentCollection.find(query)
+            const employment = await cursor.toArray()
+            res.send(employment)
+        })
+
+        //POST==> Academic Details
+        app.post('/academic', async (req, res) => {
+            const academic = req.body;
+            console.log('adding academic', academic)
+            const result = await academicCollection.insertOne(academic)
+            res.send(result)
+        })
+        //GET==>  Academic Details
+        app.get('/academic', async (req, res) => {
+            const query = {}
+            const cursor = academicCollection.find(query)
+            const academic = await cursor.toArray()
+            res.send(academic)
+        })
+
+        //POST==> training Details
+        app.post('/training', async (req, res) => {
+            const training = req.body;
+            console.log('adding training', training)
+            const result = await trainingCollection.insertOne(training)
+            res.send(result)
+        })
+        //GET==>  training Details
+        app.get('/training', async (req, res) => {
+            const query = {}
+            const cursor = trainingCollection.find(query)
+            const training = await cursor.toArray()
+            res.send(training)
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //POST : add appply job
+        /*       app.post('/apply', async (req, res) => {
+                  const stuinfo = req.body;
+                  console.log('adding applied job', stuinfo)
+                  const result = await studentCollection.insertOne(stuinfo)
+                  res.send(result)
+              }) */
 
     }
     finally {
