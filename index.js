@@ -27,6 +27,7 @@ async function run() {
         const employmentCollection = client.db('campus-recruitment').collection('Employment History Details')
         const academicCollection = client.db('campus-recruitment').collection('Academic Details')
         const trainingCollection = client.db('campus-recruitment').collection('training Summary')
+        const roleCollection = client.db('campus-recruitment').collection('Role')
 
 
 
@@ -165,6 +166,27 @@ async function run() {
             res.send(training)
         })
 
+        //CANDIDATE ROLE
+        app.post('/candidates', async (req, res) => {
+            const candidate = req.body
+            const result = await roleCollection.insertOne(candidate)
+            res.json(result)
+        })
+        app.get('/candidates/:user', async (req, res) => {
+            const user = req.params.user
+            const query = { email: user }
+            const cursor = await roleCollection.find(query).toArray()
+
+            let isAdmin = false;
+            if (cursor.role === "admin") {
+                isAdmin = true;
+            } else {
+                isAdmin = false
+            }
+
+            console.log(isAdmin)
+            res.send([...cursor, isAdmin])
+        })
 
 
 
