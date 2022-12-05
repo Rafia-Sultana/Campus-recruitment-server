@@ -176,16 +176,38 @@ async function run() {
             const user = req.params.user
             const query = { email: user }
             const cursor = await roleCollection.find(query).toArray()
-
-            let isAdmin = false;
-            if (cursor.role === "admin") {
-                isAdmin = true;
+            console.log(cursor)
+            let isCandidate = false;
+            if (cursor.role === "candidate") {
+                isCandidate = true;
             } else {
-                isAdmin = false
+                isCandidate = false
             }
 
-            console.log(isAdmin)
-            res.send([...cursor, isAdmin])
+            console.log(isCandidate)
+            res.send([...cursor, isCandidate])
+        })
+
+        //EMPLOYEE ROLE
+        app.post('/employee', async (req, res) => {
+            const employee = req.body
+            const result = await roleCollection.insertOne(employee)
+            res.json(result)
+        })
+        app.get('/employee/:user', async (req, res) => {
+            const user = req.params.user
+            const query = { email: user }
+            const cursor = await roleCollection.find(query).toArray()
+            console.log(cursor)
+            let isEmployee = false;
+            if (cursor.role === "employee") {
+                isEmployee = true;
+            } else {
+                isEmployee = false
+            }
+
+            console.log(cursor)
+            res.send([...cursor, isEmployee])
         })
 
 
