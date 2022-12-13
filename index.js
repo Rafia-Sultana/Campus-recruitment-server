@@ -28,6 +28,7 @@ async function run() {
         const academicCollection = client.db('campus-recruitment').collection('Academic Details')
         const trainingCollection = client.db('campus-recruitment').collection('training Summary')
         const roleCollection = client.db('campus-recruitment').collection('Role')
+        const aaaCollection = client.db('campus-recruitment').collection('appliedJob')
 
 
 
@@ -39,15 +40,23 @@ async function run() {
             res.send(users)
         })
 
-        //GET User sepecifiqly
-        app.get('/user/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const resutl = await userCollection.findOne(query)
-            // console.log(cursor)
-            // const studentInfo = await cursor.toArray()
-            res.send(resutl)
+        /*   //GET User sepecifiqly
+          app.get('/users/:id', async (req, res) => {
+              const id = req.params.id;
+              const query = { _id: ObjectId(id) };
+              const resutl = await userCollection.findOne(query)
+  
+              res.send(resutl)
+          }) */
+
+        app.get('/user/:uid', async (req, res) => {
+            const uid = req.params.uid
+            const query = { uid: uid }
+            const cursor = userCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
         })
+
 
 
         //POST User: add a new user
@@ -68,8 +77,9 @@ async function run() {
         })
 
         //GET==> personal
-        app.get('/personal', async (req, res) => {
-            const query = {}
+        app.get('/personal/:uid', async (req, res) => {
+            const uid = req.params.uid
+            const query = { uid: uid }
             const cursor = personalCollection.find(query)
             const personal = await cursor.toArray()
             res.send(personal)
@@ -96,8 +106,9 @@ async function run() {
         })
 
         //GET==> address 
-        app.get('/address', async (req, res) => {
-            const query = {}
+        app.get('/address/:uid', async (req, res) => {
+            const uid = req.params.uid
+            const query = { uid: uid }
             const cursor = addressCollection.find(query)
             const address = await cursor.toArray()
             res.send(address)
@@ -113,8 +124,9 @@ async function run() {
         })
 
         //GET==> address 
-        app.get('/career', async (req, res) => {
-            const query = {}
+        app.get('/career/:uid', async (req, res) => {
+            const uid = req.params.uid
+            const query = { uid: uid }
             const cursor = careerCollection.find(query)
             const career = await cursor.toArray()
             res.send(career)
@@ -129,8 +141,9 @@ async function run() {
         })
 
         //GET==> Employment History
-        app.get('/employmenthistory', async (req, res) => {
-            const query = {}
+        app.get('/employmenthistory/:uid', async (req, res) => {
+            const uid = req.params.uid
+            const query = { uid: uid }
             const cursor = employmentCollection.find(query)
             const employment = await cursor.toArray()
             res.send(employment)
@@ -144,8 +157,9 @@ async function run() {
             res.send(result)
         })
         //GET==>  Academic Details
-        app.get('/academic', async (req, res) => {
-            const query = {}
+        app.get('/academic/:uid', async (req, res) => {
+            const uid = req.params.uid
+            const query = { uid: uid }
             const cursor = academicCollection.find(query)
             const academic = await cursor.toArray()
             res.send(academic)
@@ -159,8 +173,9 @@ async function run() {
             res.send(result)
         })
         //GET==>  training Details
-        app.get('/training', async (req, res) => {
-            const query = {}
+        app.get('/training/:uid', async (req, res) => {
+            const uid = req.params.uid
+            const query = { uid: uid }
             const cursor = trainingCollection.find(query)
             const training = await cursor.toArray()
             res.send(training)
@@ -169,6 +184,7 @@ async function run() {
         //CANDIDATE ROLE
         app.post('/candidates', async (req, res) => {
             const candidate = req.body
+            console.log(candidate)
             const result = await roleCollection.insertOne(candidate)
             res.json(result)
         })
@@ -176,63 +192,48 @@ async function run() {
             const user = req.params.user
             const query = { email: user }
             const cursor = await roleCollection.find(query).toArray()
-            console.log(cursor)
-            let isCandidate = false;
-            if (cursor.role === "candidate") {
-                isCandidate = true;
-            } else {
-                isCandidate = false
-            }
 
-            console.log(isCandidate)
-            res.send([...cursor, isCandidate])
+            res.send(cursor)
         })
 
-        //EMPLOYEE ROLE
-        app.post('/employee', async (req, res) => {
-            const employee = req.body
-            const result = await roleCollection.insertOne(employee)
-            res.json(result)
+        app.get("/allCvs", async (req, res) => {
+            const personal = await personalCollection.find({}).toArray()
+            const address = await addressCollection.find({}).toArray()
+            const career = await careerCollection.find({}).toArray()
+            const employment = await employmentCollection.find({}).toArray()
+            const academic = await academicCollection.find({}).toArray()
+            const training = await trainingCollection.find({}).toArray()
+            const info = [personal, address, career, employment, academic, training]
+
+            res.send(info)
         })
-        app.get('/employee/:user', async (req, res) => {
-            const user = req.params.user
-            const query = { email: user }
-            const cursor = await roleCollection.find(query).toArray()
-            console.log(cursor)
-            let isEmployee = false;
-            if (cursor.role === "employee") {
-                isEmployee = true;
-            } else {
-                isEmployee = false
-            }
-
-            console.log(cursor)
-            res.send([...cursor, isEmployee])
-        })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //POST : add appply job
-        /*       app.post('/apply', async (req, res) => {
-                  const stuinfo = req.body;
-                  console.log('adding applied job', stuinfo)
-                  const result = await studentCollection.insertOne(stuinfo)
+        /*       app.get("/allCvs/:id", async (req, res) => {
+      
+                  const id = req.params.id
+                  console.log(id);
+                  const query = { designation: id }
+                  console.log(query)
+                  const cursor = employmentCollection.find(query)
+                  const result = await cursor.toArray()
                   res.send(result)
               }) */
+
+        app.post('/percv', async (req, res) => {
+            const percv = req.body;
+            const percv2 = await aaaCollection.insertOne(percv)
+            res.json(percv2)
+
+        })
+        app.get('/percv', async (req, res) => {
+            const query = {};
+            const cursor = aaaCollection.find(query)
+            const percv2 = await cursor.toArray()
+            res.send(percv2)
+        })
+
+
+
+
 
     }
     finally {
