@@ -40,14 +40,14 @@ async function run() {
             res.send(users)
         })
 
-        /*   //GET User sepecifiqly
-          app.get('/users/:id', async (req, res) => {
-              const id = req.params.id;
-              const query = { _id: ObjectId(id) };
-              const resutl = await userCollection.findOne(query)
-  
-              res.send(resutl)
-          }) */
+        //GET User sepecifiqly
+        app.get('/singleJob/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const resutl = await userCollection.findOne(query)
+
+            res.send(resutl)
+        })
 
         app.get('/user/:uid', async (req, res) => {
             const uid = req.params.uid
@@ -188,6 +188,23 @@ async function run() {
             const result = await roleCollection.insertOne(candidate)
             res.json(result)
         })
+
+        app.get('/candidates', async (req, res) => {
+            const query = {};
+            const cursor = roleCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        app.get('/role-user/:role', async (req, res) => {
+            const role = req.params.role
+            const query = { role: role }
+            const cursor = await roleCollection.find(query).toArray()
+
+            res.send(cursor)
+        })
+
+
         app.get('/candidates/:user', async (req, res) => {
             const user = req.params.user
             const query = { email: user }
