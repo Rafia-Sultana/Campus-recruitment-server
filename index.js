@@ -29,6 +29,8 @@ async function run() {
         const trainingCollection = client.db('campus-recruitment').collection('training Summary')
         const roleCollection = client.db('campus-recruitment').collection('Role')
         const aaaCollection = client.db('campus-recruitment').collection('appliedJob')
+        const shortListed = client.db('campus-recruitment').collection('ShortListed')
+        const rejected = client.db('campus-recruitment').collection('rejected')
 
 
 
@@ -200,8 +202,16 @@ async function run() {
             const role = req.params.role
             const query = { role: role }
             const cursor = await roleCollection.find(query).toArray()
-
             res.send(cursor)
+        })
+
+        //delete user
+        app.delete('/role-user/delete/:id', async (req, res) => {
+            const delteUser = req.params.id;
+            const result = await roleCollection.deleteOne({ _id: ObjectId(delteUser) });
+            console.log((delteUser))
+            res.send('success')
+
         })
 
 
@@ -237,6 +247,7 @@ async function run() {
 
         app.post('/percv', async (req, res) => {
             const percv = req.body;
+            console.log(percv);
             const percv2 = await aaaCollection.insertOne(percv)
             res.json(percv2)
 
@@ -246,6 +257,34 @@ async function run() {
             const cursor = aaaCollection.find(query)
             const percv2 = await cursor.toArray()
             res.send(percv2)
+        })
+
+        app.post('/short-list', async (req, res) => {
+            const perShortListed = req.body;
+            console.log(perShortListed);
+            const result = await shortListed.insertOne(perShortListed)
+            res.json(result)
+        })
+        app.get('/short-list/:uid', async (req, res) => {
+            const uid = req.params.uid
+            const query = { companyUid: uid }
+            const cursor = shortListed.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+        app.post('/rejected', async (req, res) => {
+            const perRejected = req.body;
+            console.log(perRejected);
+            const result = await rejected.insertOne(perRejected)
+            res.json(result)
+        })
+        app.get('/rejected/:uid', async (req, res) => {
+            const uid = req.params.uid
+            const query = { companyUid: uid }
+            const cursor = rejected.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+
         })
 
 
