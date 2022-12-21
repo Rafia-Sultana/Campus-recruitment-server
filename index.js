@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const nodemailer = require("nodemailer");
 // require('dotenv').config()
 //making app by calling express
 const app = express();
@@ -57,7 +58,16 @@ async function run() {
             const cursor = userCollection.find(query)
             const result = await cursor.toArray()
             res.send(result)
+
         })
+      /*   app.get('/singleuser/:apply_date', async (req, res) => {
+            // const cursor2 = userCollection.find({ "apply_date": { $gte: new Date("2022-12-20"), $lte: new Date("2022-12-01") } })
+            const cursor2 = userCollection.find()
+            const result2 = await cursor2.toArray()
+            res.send(result2)
+        }) */
+
+        /*         db.collection.find({"apply_date":{$gte:new ISODate("2017-04-14T23:59:59Z"),$lte:new ISODate("2017-04-15T23:59:59Z")}}).count(); */
 
 
 
@@ -258,6 +268,17 @@ async function run() {
             const percv2 = await cursor.toArray()
             res.send(percv2)
         })
+        app.get('/percv/:email', async (req, res) => {
+            const email = req.params.email
+            const query = { email: email }
+            const cursor = await aaaCollection.find(query).toArray()
+
+            res.send(cursor)
+        })
+    
+
+
+
 
         app.post('/short-list', async (req, res) => {
             const perShortListed = req.body;
@@ -272,6 +293,18 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
+        app.get('/shortlist-candidates/:user', async (req, res) => {
+            const user = req.params.user
+            const query = { email: user }
+            const cursor = await shortListed.find(query).toArray()
+
+            res.send(cursor)
+        })
+
+
+
+
+
         app.post('/rejected', async (req, res) => {
             const perRejected = req.body;
             console.log(perRejected);
@@ -287,6 +320,36 @@ async function run() {
 
         })
 
+        /*    app.post("/sendEmail", async (req, res) => {
+   
+               const { toEmail, fromEmail } = req.body;
+   
+               let testAccount = await nodemailer.createTestAccount();
+   
+               let transporter = nodemailer.createTransport({
+                   host: "smtp.ethereal.email",
+                   port: 587,
+                   secure: false, // true for 465, false for other ports
+                   auth: {
+                       user: testAccount.user, // generated ethereal user
+                       pass: testAccount.pass, // generated ethereal password
+                   },
+               });
+   
+   
+               let info = await transporter.sendMail({
+   
+                   from: fromEmail, // sender address
+                   to: toEmail, // list of receivers
+                   subject: "Short Listed", // Subject line
+                   text: "simpletext", // plain text body
+                   html: "<b>Hello world?</b>", // html body
+               });
+   
+               console.log("Message sent: %s", info.messageId);
+               console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+           })
+    */
 
 
 
